@@ -72,8 +72,10 @@ wss.on('connection', (ws) => {
           type: 'incomingMessage',
           id: uuidV4(),
           user: dataObject.user,
-          message: dataObject.message
+          message: dataObject.message,
+          usercolor: dataObject.usercolor
         }
+        //console.log(dataObject.usercolor);
         break;
     }
 
