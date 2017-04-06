@@ -18,7 +18,7 @@ const wss = new SocketServer({ server });
 wss.broadcast = (data) => {
   wss.clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
-      console.log(data);
+      //console.log(data);
       client.send(data);
     }
   });
@@ -44,6 +44,14 @@ wss.on('connection', (ws) => {
   // };
 
   // console.log('new connection', socketId);
+  let returnUsersLoggedIn = {};
+
+  returnUsersLoggedIn = {
+    type: 'loggedInUsers',
+    count: wss.clients.size
+  }
+
+  wss.broadcast(JSON.stringify(returnUsersLoggedIn));
 
   ws.on('message', (data) => {
 
@@ -81,5 +89,13 @@ wss.on('connection', (ws) => {
   // ws.send('something');
 
   // Set up a callback for when a client closes the socket. This usually means they closed their browser.
-  ws.on('close', () => console.log(`Client connected. We have ${wss.clients.size} client socket(s) open right now.`));
+  ws.on('close', () => {
+    console.log(`Client connected. We have ${wss.clients.size} client socket(s) open right now.`);
+    let returnUsersLoggedIn = {};
+    returnUsersLoggedIn = {
+      type: 'loggedInUsers',
+      count: wss.clients.size
+    }
+    wss.broadcast(JSON.stringify(returnUsersLoggedIn));
+  });
 });
