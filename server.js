@@ -31,21 +31,7 @@ wss.broadcast = (data) => {
 wss.on('connection', (ws) => {
   console.log(`Client connected. We have ${wss.clients.size} client socket(s) open right now.`);
 
-  // let nextSocketId = 1;
-
-  // const sockets = {};
-
-  // const socketId = nextSocketId;
-  // nextSocketId++;
-
-  // sockets[socketId] = {
-  //   socket: ws,
-  //   first: wss.clients.size === 1
-  // };
-
-  // console.log('new connection', socketId);
   let returnUsersLoggedIn = {};
-
   returnUsersLoggedIn = {
     type: 'loggedInUsers',
     count: wss.clients.size
@@ -54,11 +40,8 @@ wss.on('connection', (ws) => {
   wss.broadcast(JSON.stringify(returnUsersLoggedIn));
 
   ws.on('message', (data) => {
-
     const dataObject = JSON.parse(data);
-
     let returnMessage = {};
-
     switch (dataObject.type) {
       case 'postNotification':
          returnMessage = {
@@ -75,20 +58,10 @@ wss.on('connection', (ws) => {
           message: dataObject.message,
           usercolor: dataObject.usercolor
         }
-        //console.log(dataObject.usercolor);
         break;
     }
-
     wss.broadcast(JSON.stringify(returnMessage));
-
-    // Object.values(sockets)
-    //   .find(s => s.first)
-    //   .socket
-    //   .send(JSON.stringify(dataObject));
-
   });
-
-  // ws.send('something');
 
   // Set up a callback for when a client closes the socket. This usually means they closed their browser.
   ws.on('close', () => {
