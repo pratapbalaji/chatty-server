@@ -46,11 +46,31 @@ wss.on('connection', (ws) => {
   // console.log('new connection', socketId);
 
   ws.on('message', (data) => {
-    const dataObject = JSON.parse(data);
-    dataObject.id = uuidV4();
-    console.log('User ' + dataObject.user + ' with a UUID of ' + dataObject.id + ' said ' + dataObject.message);
 
-    wss.broadcast(JSON.stringify(dataObject));
+    const dataObject = JSON.parse(data);
+
+    let returnMessage = {};
+
+    switch (dataObject.type) {
+      case 'postNotification':
+         returnMessage = {
+          type: 'incomingNotification',
+          userA: dataObject.userA,
+          userB: dataObject.userB
+        }
+        break;
+      case 'postMessage':
+         returnMessage = {
+          type: 'incomingMessage',
+          id: uuidV4(),
+          user: dataObject.user,
+          message: dataObject.message
+        }
+        break;
+    }
+
+    wss.broadcast(JSON.stringify(returnMessage));
+
     // Object.values(sockets)
     //   .find(s => s.first)
     //   .socket
